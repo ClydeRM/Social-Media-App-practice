@@ -1,14 +1,16 @@
-const { ApolloServer } = require("apollo-server");
+const { ApolloServer, PubSub } = require("apollo-server");
 const mongoose = require("mongoose");
 
 const typeDefs = require("./graphql/typeDefs");
 const resolvers = require("./graphql/resolvers");
 const { MONGODB } = require("./config.js");
 
+const pubsub = new PubSub();
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({req}), // 不用特地建立一個認證token的Auth middleware 可以將 express 的 req 封包整個傳入 Graphql 解析 (似 port forwarding)
+  context: ({ req }) => ({req, pubsub}), // 不用特地建立一個認證token的Auth middleware 可以將 express 的 req 封包整個傳入 Graphql 解析 (似 port forwarding)
 });
 
 mongoose
