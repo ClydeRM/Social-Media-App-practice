@@ -9,6 +9,7 @@ import "./App.css"; // import custom css after semantic ui css can override sema
 
 // context
 import { AuthProvider } from "./context/auth";
+import AuthRoute from "./util/AuthRoute";
 
 // component
 import MenuBar from "./components/MenuBar";
@@ -24,9 +25,9 @@ const App = () => {
       <Router>
         <Container>
           <MenuBar />
-          <Route exact path="/" component={Home}></Route>
-          <Route exact path="/login" component={Login}></Route>
-          <Route exact path="/register" component={Register}></Route>
+          <Route exact path="/" component={Home} />
+          <AuthRoute exact path="/login" component={Login} />
+          <AuthRoute exact path="/register" component={Register} />
         </Container>
       </Router>
     </AuthProvider>
