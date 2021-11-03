@@ -2,10 +2,11 @@ import React, { useContext, useState } from "react";
 import { Menu } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
-// import { AuthContext } from "../context/auth";
+import { AuthContext } from "../context/auth";
 
 const MenuBar = () => {
-  //   const { user, logout } = useContext(AuthContext);
+  
+  const { user, logout } = useContext(AuthContext);
   // from web api to get url link
   const pathname = window.location.pathname;
 
@@ -15,16 +16,25 @@ const MenuBar = () => {
 
   const handleItemClick = (e, { name }) => setActiveItem(name);
 
-  //   const menuBar = user ? (
-  //     <Menu pointing secondary size="massive" color="teal">
-  //       <Menu.Item name={user.username} active as={Link} to="/" />
 
-  //       <Menu.Menu position="right">
-  //         <Menu.Item name="logout" onClick={logout} />
-  //       </Menu.Menu>
-  //     </Menu>
-  //   ) : (
-  return (
+  const menuBar = user ? (
+    // If user is login
+    <Menu pointing secondary size="massive" color="teal">
+      <Menu.Item
+        name={user.username} // Show username as home btn
+        active // Set not always active
+        as={Link} // Make this component as a Link Component and pass a props to Link
+        to="/" // Link component direct to which page?
+      />
+      <Menu.Menu position="right">
+        <Menu.Item
+          name="logout"
+          onClick={logout} // Trigger logout function
+        />
+      </Menu.Menu>
+    </Menu>
+  ) : (
+    // If user is logout
     <Menu pointing secondary size="massive" color="teal">
       <Menu.Item
         name="home"
@@ -33,7 +43,6 @@ const MenuBar = () => {
         as={Link} // Make this component as a Link Component and pass a props to Link
         to="/" // Link component direct to which page?
       />
-
       <Menu.Menu position="right">
         <Menu.Item
           name="login"
@@ -53,9 +62,7 @@ const MenuBar = () => {
     </Menu>
   );
 
-  //   );
-
-  //   return menuBar;
+  return menuBar;
 };
 
 export default MenuBar;
