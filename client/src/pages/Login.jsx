@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button, Form } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
+import { AuthContext } from "../context/auth";
+
 import { useForm } from "../util/hooks";
 
 const Login = (props) => {
-  const [errors, setErrors] = useState({});
+  const context = useContext(AuthContext); // for record user login/out state
+  const [errors, setErrors] = useState({}); // for record error message
 
   const { onChange, onSubmit, values } = useForm(login, {
     username: "",
@@ -18,8 +21,15 @@ const Login = (props) => {
   // {option} have a function update() will trigger when mutation do successfully
   // update(proxy, result) , proxy can read metadata in the case not use so set _ , result is return value
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-    update(_, result) {
-      //   console.log(result);
+    // update(proxy, result){}
+    update(_, { data: { login: userData } }) {
+      // Change user login state method 1
+      // console.log(result); // result:{data:{login:{id, username, token ...}}}
+      // context.login(result.data.login);
+
+      // Change user login state method 2
+      context.login(userData);
+
       props.history.push("/");
     },
     onError(error) {

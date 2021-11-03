@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Form } from "semantic-ui-react";
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
+import { AuthContext } from "../context/auth";
+
 import { useForm } from "../util/hooks";
 
 const Register = (props) => {
+  const context = useContext(AuthContext); // for record user registry data
   const [errors, setErrors] = useState({});
 
   const { onChange, onSubmit, values } = useForm(registerUser, {
@@ -20,8 +23,13 @@ const Register = (props) => {
   // {option} have a function update() will trigger when mutation do successfully
   // update(proxy, result) , proxy can read metadata in the case not use so set _ , result is return value
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
-    update(_, result) {
-      //   console.log(result);
+    // update(proxy, result){}
+    update(_, { data: { register: userData } }) {
+      // console.log(result);
+
+      // Change user registry state
+      context.login(userData);
+
       props.history.push("/");
     },
     onError(error) {
