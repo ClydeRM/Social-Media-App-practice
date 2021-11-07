@@ -6,8 +6,10 @@ import { Button, Icon, Label } from "semantic-ui-react";
 
 
 const LikeButton = ({user, post: { id, likes, likeCount } }) => {
+  // Default state  
   const [liked, setLiked] = useState(false);
 
+  // If user login, Detect user have likePost?, and change state
   useEffect(() => {
     if (user && likes.find((like) => like.username === user.username)) {
       // user login and have liked this post
@@ -17,10 +19,12 @@ const LikeButton = ({user, post: { id, likes, likeCount } }) => {
     }
   }, [user, likes]);
 
+  // Send Mutation
   const [likePost] = useMutation(LIKE_POST_MUTATION, {
       variables: {postId: id}
   })
 
+  // Button animation
   const likeButton = user ? (
     // user login
     liked ? (
