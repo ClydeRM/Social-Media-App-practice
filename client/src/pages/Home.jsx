@@ -13,7 +13,7 @@ const Home = () => {
 
   // Fetch all Posts data
   // destructure the data to only get Posts data array object
-  // const { loading, data:{getPosts: posts} } = useQuery(FETCH_POSTS_QUERY); getError getPosts undefined?
+  // const { loading, data:{getPosts: posts} } = useQuery(FETCH_POSTS_QUERY); //getError getPosts undefined?
   const { loading, data } = useQuery(FETCH_POSTS_QUERY);
   const { getPosts: posts } = data || {};
 
