@@ -16,10 +16,10 @@ const Login = (props) => {
     password: "",
   });
 
-  // Destructure return value addUser is function name {loading} is return value
-  // useMutation(gqlcontext, {options})
+  // Destructure return value loginUser is function name {loading} is return value
+  // useMutation(gql_context, {options})
   // {option} have a function update() will trigger when mutation do successfully
-  // update(proxy, result) , proxy can read metadata in the case not use so set _ , result is return value
+  // update(proxy, result) , proxy can read client cache metadata in the case not use so set _ , result is return value
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     // update(proxy, result){}
     update(_, { data: { login: userData } }) {
@@ -35,7 +35,7 @@ const Login = (props) => {
     onError(error) {
       setErrors(error.graphQLErrors[0].extensions.exception.errors);
     },
-    variables: values, // what refer values pass in mutation like username etc...
+    variables: values, // what reference values pass in mutation like username etc...
   });
 
   function login() {

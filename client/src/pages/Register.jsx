@@ -21,7 +21,7 @@ const Register = (props) => {
   // Destructure return value addUser is function name {loading} is return value
   // useMutation(gqlcontext, {options})
   // {option} have a function update() will trigger when mutation do successfully
-  // update(proxy, result) , proxy can read metadata in the case not use so set _ , result is return value
+  // update(proxy, result) , proxy can read client cache metadata in the case not use so set _ , result is return value
   const [addUser, { loading }] = useMutation(REGISTER_USER, {
     // update(proxy, result){}
     update(_, { data: { register: userData } }) {
