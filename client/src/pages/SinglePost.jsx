@@ -1,18 +1,33 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
-import { Card, Grid, Image, Button, Icon, Label } from "semantic-ui-react";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import {
+  Card,
+  Grid,
+  Image,
+  Button,
+  Icon,
+  Label,
+  Form,
+} from "semantic-ui-react";
 import moment from "moment";
 
 import { AuthContext } from "../context/auth";
 import LikeButton from "../components/LikeButton";
 import DeleteButton from "../components/DeleteButton";
 
+
 const SinglePost = (props) => {
   const { user } = useContext(AuthContext);
 
   const postId = props.match.params.postId; // From url link params
-  console.log(postId);
+  // console.log(postId);
+
+  // comment state
+  const [comment, setComment] = useState("");
+
+  // Input init Ref
+  const commentInputRef = useRef(null);
 
   // Same bug in Home.jsx, useQuery can't destructure data
   const { data } = useQuery(FETCH_POST_QUERY, {
@@ -20,6 +35,20 @@ const SinglePost = (props) => {
   });
   const { getPost } = data || {};
 
+  // Create comment mutation
+  const [createComment] = useMutation(CREATE_COMMENT_MUTATION, {
+    update() {
+      setComment("");
+      // Blur comment input field
+      commentInputRef.current.blur();
+    },
+    variables: {
+      postId,
+      body: comment,
+    },
+  });
+
+  // act DeletePost redirect to home Page
   function deletePostCallback() {
     props.history.push("/");
   }
@@ -64,7 +93,6 @@ const SinglePost = (props) => {
                 <Button
                   as="div"
                   labelPosition="right"
-                  onClick={() => console.log("Comment Post")}
                 >
                   <Button basic color="blue">
                     <Icon name="comments" />
@@ -78,6 +106,49 @@ const SinglePost = (props) => {
                 )}
               </Card.Content>
             </Card>
+            {user && ( // If user is login, showing AddComment form
+              <Card fluid>
+                <Card.Content>
+                  <p>Post a comment</p>
+                  <Form>
+                    <div className="ui action input fluid">
+                      <input
+                        type="text"
+                        placeholder="Comment..."
+                        name="comment"
+                        value={comment}
+                        onChange={(event) => setComment(event.target.value)}
+                        ref={commentInputRef} // After submit, input must be unactived 
+                      ></input>
+                      <button
+                        type="submit"
+                        className="ui button teal"
+                        disable={comment.trim() === ""}
+                        onClick={createComment}
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </Form>
+                </Card.Content>
+              </Card>
+            )}
+            {comments.map(
+              (
+                comment // showing comment card
+              ) => (
+                <Card fluid key={comment.id}>
+                  <Card.Content>
+                    {user && user.username === comment.username && (
+                      <DeleteButton postId={id} commentId={comment.id} />
+                    )}
+                    <Card.Header>{comment.username}</Card.Header>
+                    <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
+                    <Card.Description>{comment.body}</Card.Description>,
+                  </Card.Content>
+                </Card>
+              )
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -105,6 +176,21 @@ const FETCH_POST_QUERY = gql`
         body
         createdAt
       }
+    }
+  }
+`;
+
+const CREATE_COMMENT_MUTATION = gql`
+  mutation createComment($postId: ID!, $body: String!) {
+    createComment(postId: $postId, body: $body) {
+      id
+      comments {
+        id
+        username
+        body
+        createdAt
+      }
+      commentCount
     }
   }
 `;
